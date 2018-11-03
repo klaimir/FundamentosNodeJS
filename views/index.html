@@ -6,18 +6,23 @@
   </head>
   <body>
     <h1><%= titulo %></h1>
-    <p>Welcome to <%= titulo %></p>
+
+    <% getLocales().forEach( lang => { %>
+    <a href="/lang/<%= lang %>"><%= lang.toUpperCase() %></a>&nbsp;
+    <% }) %> 
+
+    <p><%= __('welcome_title') %></p>
 
     <section>
-      <h2>Listado de anuncios</h2>
+      <h2><%= __('list_title') %></h2>
       <% anuncios.forEach(function(anuncio) { %>
         <article>  
           <h3>
-            <%= anuncio.nombre %> - <%= anuncio.precio %> €
+            <img src="/images/anuncios/<%= 'thumbnail-'+anuncio.foto %>" alt="thumbnail <%= anuncio.nombre %>"> <%= anuncio.nombre %> - <%= anuncio.precio %> €
             <% if(anuncio.venta) { %>
-              <p><strong>(VENTA)</strong></p> 
+              <p><strong>(<%= __('sell') %>)</strong></p> 
             <% } else { %>
-              <p><strong>(BUSCA)</strong></p> 
+              <p><strong>(<%= __('search') %>)</strong></p> 
             <% } %>
           </h3>
           

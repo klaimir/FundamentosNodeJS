@@ -23,8 +23,12 @@ app.use(cookieParser());
 // para servir ficheros estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Configuramos multiidioma en express
+const i18n = require('./lib/i18nConfigure')();
+app.use(i18n.init);
+
 // Variables globales de templates
-app.locals.titulo = 'NodePop';
+app.locals.titulo = i18n.__('app_title');
 
 /**
  * Conexión con la base de datos a través de Mongoose y registro de modelos
@@ -43,6 +47,7 @@ app.use('/apiv1/anuncios', require('./routes/apiv1/anuncios'));
  * Rutas de mi aplicación web
  */
 app.use('/', require('./routes/index'));
+app.use('/lang', require('./routes/lang'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

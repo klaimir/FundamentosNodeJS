@@ -8,8 +8,10 @@ const readline = require('readline');
 require('dotenv').config();
 
 const anuncios = require('./data/anuncios.json').anuncios;
+const usuarios = require('./data/usuarios.json').usuarios;
 const conn = require('./lib/connectMongoose');
 const Anuncio = require('./models/Anuncio');
+const Usuario = require('./models/Usuario');
 
 // Cuando se abra la conexión de la base de datos quiero realizar la pregunta
 conn.once('open', async () => {
@@ -21,8 +23,8 @@ conn.once('open', async () => {
             process.exit();
         }
 
-        // console.log(anuncios);
         await initAnuncios(anuncios);
+        await initUsuarios(usuarios);
 
         // Cerrar la conexión
         conn.close();
@@ -55,4 +57,18 @@ async function initAnuncios(anuncios) {
     // Cargar los nuevos documentos
     const inserted = await Anuncio.insertMany(anuncios);
     console.log('Insertados ' + inserted.length + ' elementos');
+}
+
+
+async function initUsuarios(usuarios) {
+    // Eliminar los documentos actuales
+    const deleted = await Usuario.deleteMany();
+    console.log('Eliminados ' + deleted.n + ' usuarios');
+    // Hacer hash de las passwords
+    for (let i = 0; i < usuarios.length; i++) {
+        usuarios[i].password = await Usuario.hashPassword(usuarios[i].password);        
+    }
+    // Cargar los nuevos documentos
+    const inserted = await Usuario.insertMany(usuarios);
+    console.log('Insertados ' + inserted.length + ' usuarios');
 }
